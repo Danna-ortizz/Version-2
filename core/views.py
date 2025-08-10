@@ -139,36 +139,58 @@ def reservar_paquete(request):
     return render(request, 'core/index.html', {'paquetes': paquetes})
 
 
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+import logging
+
+logger = logging.getLogger(__name__)
+
 def login_alt_view(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+    try:
+        if request.method == 'POST':
+            email = request.POST.get('email')
+            password = request.POST.get('password')
 
-        user = authenticate(request, username=email, password=password)
-        if user:
-            login(request, user)
-            return redirect('form_rembolso')  # ajusta según tu lógica
-        else:
-            return render(request, 'core/login_alt.html', {
-                'error': 'Correo o contraseña incorrectos'
-            })
+            user = authenticate(request, username=email, password=password)
+            if user:
+                login(request, user)
+                return redirect('form_rembolso')
+            else:
+                return render(request, 'core/login_alt.html', {
+                    'error': 'Correo o contraseña incorrectos'
+                })
 
-    return render(request, 'core/login_alt.html')
+        return render(request, 'core/login_alt.html')
+
+    except Exception as e:
+        logger.error(f"Error en login_alt_view: {e}")
+        return render(request, 'core/login_alt.html', {
+            'error': 'Ocurrió un error inesperado. Intenta nuevamente.'
+        })
+
+
 def login_view(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+    try:
+        if request.method == 'POST':
+            email = request.POST.get('email')
+            password = request.POST.get('password')
 
-        user = authenticate(request, username=email, password=password)
-        if user:
-            login(request, user)
-            return redirect('core/form_rembolso')  # ajusta según tu lógica
-        else:
-            return render(request, 'core/login_alt.html', {
-                'error': 'Correo o contraseña incorrectos'
-            })
+            user = authenticate(request, username=email, password=password)
+            if user:
+                login(request, user)
+                return redirect('form_rembolso')  # ← corregido: no uses 'core/form_rembolso'
+            else:
+                return render(request, 'core/login_alt.html', {
+                    'error': 'Correo o contraseña incorrectos'
+                })
 
-    return render(request, 'core/login_alt.html')
+        return render(request, 'core/login_alt.html')
+
+    except Exception as e:
+        logger.error(f"Error en login_view: {e}")
+        return render(request, 'core/login_alt.html', {
+            'error': 'Ocurrió un error inesperado. Intenta nuevamente.'
+        })
 
 def form_rembolso(request):
     return render(request, 'core/form_rembolso.html')
