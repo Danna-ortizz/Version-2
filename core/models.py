@@ -2,7 +2,6 @@
 from django.db import models
 
 class Cliente(models.Model):
-    id = models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')  # Este campo 'id' es autoincrementable
     nombre_completo = models.TextField()
     email = models.EmailField()
     telefono = models.TextField()
@@ -46,10 +45,13 @@ class PaqueteTuristico(models.Model):
 class Reserva(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     paquete = models.ForeignKey(PaqueteTuristico, on_delete=models.CASCADE)
-    fecha_reserva = models.DateField(auto_now_add=True)
-    estado_reserva = models.TextField()
+    fecha_reserva = models.DateTimeField(auto_now_add=True)
+    estado_reserva = models.CharField(max_length=50)
     total_reserva = models.DecimalField(max_digits=10, decimal_places=2)
-    metodo_pago = models.TextField()
+    metodo_pago = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"Reserva {self.id} - {self.cliente.nombre_completo} - {self.paquete.nombre_paquete}"
 
 class Alerta(models.Model):
     paquete = models.ForeignKey(PaqueteTuristico, on_delete=models.CASCADE)
