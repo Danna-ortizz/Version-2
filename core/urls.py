@@ -21,6 +21,7 @@ urlpatterns = [
     path('reservar/', views.reservar_paquete, name='reservar'),  # esta es la que usa el formulario
     path('login-alt/', login_alt_view, name='login_alt'),  
     path('form_rembolso/', views.form_rembolso, name='form_rembolso'),
+    path('estadisticos/', views.estadisticos, name='estadisticos'),
 
 
     # Rutas de administración

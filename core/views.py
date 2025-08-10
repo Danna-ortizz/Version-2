@@ -195,6 +195,11 @@ def login_view(request):
 def form_rembolso(request):
     return render(request, 'core/form_rembolso.html')
 
+def estadisticos(request):
+    return render(request, 'core/estadisticos.html')
+
+
+
 
 def historial_reservas(request, cliente_id):
     cliente = get_object_or_404(Cliente, id=cliente_id)
@@ -225,6 +230,41 @@ def cancelar_reserva(request, reserva_id):
         messages.error(request, "La reserva ya está cancelada.")
 
     return redirect('inicio')
+
+# views.py
+from django.shortcuts import render
+from django.db import connection
+
+def estadisticos(request):
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT TOP (5)
+                p.id AS paquete_id,
+                p.nombre_paquete,
+                COUNT(r.id) AS total_reservas,
+                p.precio,
+                p.destino_id,
+                p.cupos_disponibles
+            FROM paquetes_turisticos p
+            LEFT JOIN core_reserva r ON p.id = r.paquete_id
+            GROUP BY p.id, p.nombre_paquete, p.precio, p.destino_id, p.cupos_disponibles
+            ORDER BY total_reservas DESC;
+        """)
+        rows = cursor.fetchall()
+
+    paquetes = [
+        {
+            'id': row[0],
+            'nombre': row[1],
+            'reservas': row[2],
+            'precio': row[3],
+            'destino': row[4],
+            'cupos': row[5]
+        }
+        for row in rows
+    ]
+
+    return render(request, 'core/estadisticos.html', {'paquetes': paquetes})
 
 
 def pagar_reserva(request, reserva_id):
