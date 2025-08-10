@@ -1,0 +1,38 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-primary" style="font-family: 'Montserrat', Arial, sans-serif;">
+        Historial de Reembolsos
+    </h2>
+
+    {% if reembolsos %}
+    <table class="table table-bordered table-hover shadow-sm bg-white">
+        <thead class="table-info">
+            <tr>
+                <th>#</th>
+                <th>Reserva</th>
+                <th>Cliente</th>
+                <th>Paquete</th>
+                <th>Monto</th>
+                <th>Fecha de Reembolso</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in reembolsos %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ r.reserva_id }}</td>
+                <td>{{ r.cliente.nombre_completo }}</td>
+                <td>{{ r.paquete.nombre_paquete }}</td>
+                <td>${{ r.monto_reembolsado }}</td>
+                <td>{{ r.fecha_reembolso }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="text-muted">No se han registrado reembolsos todavía.</p>
+    {% endif %}
+</div>
+{% endblock %}

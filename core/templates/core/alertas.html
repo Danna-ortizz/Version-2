@@ -1,0 +1,36 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-danger" style="font-family: 'Montserrat', Arial, sans-serif;">
+        Alertas de Baja Disponibilidad
+    </h2>
+
+    {% if alertas %}
+    <table class="table table-bordered table-hover shadow-sm bg-white">
+        <thead class="table-danger">
+            <tr>
+                <th>#</th>
+                <th>Paquete</th>
+                <th>Destino</th>
+                <th>Cupos Disponibles</th>
+                <th>Fecha de Alerta</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in alertas %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ a.paquete.nombre_paquete }}</td>
+                <td>{{ a.paquete.destino.ciudad }}, {{ a.paquete.destino.pais }}</td>
+                <td>{{ a.cupos_disponibles }}</td>
+                <td>{{ a.fecha_alerta }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="text-muted">No hay alertas activas por baja ocupación.</p>
+    {% endif %}
+</div>
+{% endblock %}

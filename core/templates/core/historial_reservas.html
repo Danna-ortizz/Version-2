@@ -1,0 +1,46 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-primary" style="font-family: 'Montserrat', Arial, sans-serif;">
+        Historial de reservas de {{ cliente.nombre_completo }}
+    </h2>
+
+    {% if reservas %}
+    <table class="table table-bordered table-hover shadow-sm bg-white">
+        <thead class="table-primary">
+            <tr>
+                <th>#</th>
+                <th>Paquete</th>
+                <th>Destino</th>
+                <th>Duración</th>
+                <th>Fecha reserva</th>
+                <th>Estado</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in reservas %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ r.paquete.nombre_paquete }}</td>
+                <td>{{ r.paquete.destino.ciudad }}, {{ r.paquete.destino.pais }}</td>
+                <td>{{ r.paquete.duracion_dias }} días</td>
+                <td>{{ r.fecha_reserva }}</td>
+                <td>
+                    <span class="badge {% if r.estado_reserva == 'completada' %}bg-success
+                                      {% elif r.estado_reserva == 'cancelada' %}bg-danger
+                                      {% else %}bg-warning text-dark{% endif %}">
+                        {{ r.estado_reserva|title }}
+                    </span>
+                </td>
+                <td>${{ r.total_reserva }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="text-muted">No hay reservas registradas para este cliente.</p>
+    {% endif %}
+</div>
+{% endblock %}

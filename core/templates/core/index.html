@@ -1,0 +1,103 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Encabezado profesional -->
+<div class="header-main">
+    <h1 class="display-4">Agencia de Viajes</h1>
+    <p class="lead">¡Descubre destinos exclusivos y reserva tu próxima aventura!</p>
+</div>
+
+<!-- PAQUETES TURÍSTICOS -->
+<div class="container mt-5" id="paquetes">
+    <div class="text-center mb-4">
+        <h2 class="display-5" style="font-family: 'Montserrat', Arial, sans-serif; color: #0077b6;">Paquetes Turísticos</h2>
+        <p class="lead">Elige tu próximo destino y reserva con facilidad</p>
+    </div>
+    <div class="row">
+        {% for paquete in paquetes %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-lg border-0">
+                {% if paquete.imagen %}
+                <img src="{{ paquete.imagen.url }}" class="card-img-top" style="height: 200px; object-fit: cover; border-radius: 18px 18px 0 0;" alt="Imagen de {{ paquete.nombre_paquete }}">
+                {% else %}
+                <img src="https://via.placeholder.com/400x200?text=Sin+imagen" class="card-img-top" style="border-radius: 18px 18px 0 0;" alt="Sin imagen">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ paquete.nombre_paquete }}</h5>
+                    <p class="card-text text-muted">{{ paquete.descripcion|truncatewords:15 }}</p>
+                    <ul class="list-unstyled">
+                        <li><strong>Destino:</strong> {{ paquete.destino.ciudad }}, {{ paquete.destino.pais }}</li>
+                        <li><strong>Duración:</strong> {{ paquete.duracion_dias }} días</li>
+                        <li><strong>Precio:</strong> ${{ paquete.precio }}</li>
+                        <li><strong>Fecha:</strong> {{ paquete.fecha_inicio }} al {{ paquete.fecha_fin }}</li>
+                    </ul>
+                    <span class="badge bg-success">{{ paquete.estado_paquete }}</span>
+                    <button type="button" class="btn btn-interactive btn-lg w-100 mt-3" data-bs-toggle="modal" data-bs-target="#reservaModal{{ paquete.id }}">
+                        Reservar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL -->
+        <div class="modal fade" id="reservaModal{{ paquete.id }}" tabindex="-1" aria-labelledby="reservaModalLabel{{ paquete.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="POST" action="{% url 'reservar' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="paquete_id" value="{{ paquete.id }}">
+                        
+                        <div class="mb-3">
+                            <label>Nombre</label>
+                            <input type="text" name="nombre" class="form-control" required autocomplete="off">
+                        </div>
+                        <div class="mb-3">
+                            <label>Correo</label>
+                            <input type="email" name="correo" class="form-control" required autocomplete="off">
+                        </div>
+                        <div class="mb-3">
+                            <label>Teléfono</label>
+                            <input type="text" name="telefono" class="form-control" required autocomplete="off">
+                        </div>
+                        <div class="mb-3">
+                            <label>Dirección</label>
+                            <input type="text" name="direccion" class="form-control" required autocomplete="off">
+                        </div>
+                        <div class="mb-3">
+                            <label>Tipo de documento</label>
+                            <input type="text" name="tipo_documento" class="form-control" required autocomplete="off">
+                        </div>
+                        <div class="mb-3">
+                            <label>Número de documento</label>
+                            <input type="text" name="numero_documento" class="form-control" required autocomplete="off">
+                        </div>
+                        <div class="mb-3">
+                            <label>Método de pago</label>
+                            <input type="text" name="metodo_pago" class="form-control" required autocomplete="off">
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-interactive">Confirmar reserva</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No hay paquetes turísticos disponibles.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
