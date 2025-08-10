@@ -150,7 +150,7 @@ def log_usu(request):
         else:
             messages.error(request, 'Correo o contraseña incorrectos.')
 
-    return render(request, 'core/main.html')
+    return render(request, 'core/log_usu.html')
 
 
 def historial_reservas(request, cliente_id):
