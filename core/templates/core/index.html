@@ -83,10 +83,16 @@
                             <input type="text" name="numero_documento" class="form-control" required autocomplete="off">
                         </div>
                         <div class="mb-3">
-                            <label>Método de pago</label>
-                            <input type="text" name="metodo_pago" class="form-control" required autocomplete="off">
+                            <label for="metodo_pago">Método de pago</label>
+                            <select name="metodo_pago" class="form-control" required>
+                                <option value="">Seleccione...</option>
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Tarjeta de crédito">Tarjeta de crédito</option>
+                                <option value="Tarjeta de débito">Tarjeta de débito</option>
+                                <option value="Transferencia bancaria">Transferencia bancaria</option>
+                                <option value="PayPal">PayPal</option>
+                            </select>
                         </div>
-
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                             <button type="submit" class="btn btn-interactive">Confirmar reserva</button>

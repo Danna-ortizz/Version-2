@@ -44,7 +44,7 @@ class PaqueteTuristico(models.Model):
 
 class Reserva(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
-  #  paquete = models.ForeignKey(PaqueteTuristico, on_delete=models.CASCADE)
+    paquete = models.ForeignKey(PaqueteTuristico, on_delete=models.CASCADE)
     fecha_reserva = models.DateTimeField(auto_now_add=True)
     estado_reserva = models.CharField(max_length=50)
     total_reserva = models.DecimalField(max_digits=10, decimal_places=2)
