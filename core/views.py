@@ -5,6 +5,8 @@ from django.db import connection
 from .models import PaqueteTuristico, Cliente, Reserva
 from .forms import ReservaForm
 from collections import defaultdict
+from django.contrib.auth import authenticate, login
+
 
 def inicio(request):
     paquetes = PaqueteTuristico.objects.select_related('destino').all()
@@ -148,7 +150,7 @@ def log_usu(request):
         else:
             messages.error(request, 'Correo o contraseña incorrectos.')
 
-    return render(request, 'core/log_usu.html')
+    return render(request, 'core/main.html')
 
 
 def historial_reservas(request, cliente_id):

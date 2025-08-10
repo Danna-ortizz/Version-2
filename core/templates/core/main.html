@@ -1,0 +1,34 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 500px;">
+    <h2 class="mb-4 text-center">Solicitud de Reembolso</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" action="">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="order_id" class="form-label">ID del pedido</label>
+            <input type="text" class="form-control" id="order_id" name="order_id" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="reason" class="form-label">Motivo del reembolso</label>
+            <textarea class="form-control" id="reason" name="reason" rows="4" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-danger w-100">Solicitar Reembolso</button>
+    </form>
+</div>
+{% endblock %}
