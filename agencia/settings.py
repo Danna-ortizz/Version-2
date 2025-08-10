@@ -60,6 +60,11 @@ TEMPLATES = [
         },
     },
 ]
+AUTHENTICATION_BACKENDS = [
+    'core.auth_backend.SQLServerAuthBackend',  # ajusta si tu app tiene otro nombre
+    'django.contrib.auth.backends.ModelBackend',   # opcional, mantiene el backend por defecto
+]
+
 
 WSGI_APPLICATION = 'agencia.wsgi.application'
 
@@ -95,6 +100,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    
 ]
 
 # --------------------

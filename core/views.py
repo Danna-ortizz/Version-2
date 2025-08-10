@@ -138,19 +138,40 @@ def reservar_paquete(request):
     paquetes = PaqueteTuristico.objects.all()
     return render(request, 'core/index.html', {'paquetes': paquetes})
 
-def log_usu(request):
+
+def login_alt_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
 
         user = authenticate(request, username=email, password=password)
-        if user is not None:
+        if user:
             login(request, user)
-            return redirect('inicio')
+            return redirect('form_rembolso')  # ajusta según tu lógica
         else:
-            messages.error(request, 'Correo o contraseña incorrectos.')
+            return render(request, 'core/login_alt.html', {
+                'error': 'Correo o contraseña incorrectos'
+            })
 
-    return render(request, 'core/log_usu.html')
+    return render(request, 'core/login_alt.html')
+def login_view(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=email, password=password)
+        if user:
+            login(request, user)
+            return redirect('core/form_rembolso')  # ajusta según tu lógica
+        else:
+            return render(request, 'core/login_alt.html', {
+                'error': 'Correo o contraseña incorrectos'
+            })
+
+    return render(request, 'core/login_alt.html')
+
+def form_rembolso(request):
+    return render(request, 'core/form_rembolso.html')
 
 
 def historial_reservas(request, cliente_id):

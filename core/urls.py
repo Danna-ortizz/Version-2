@@ -1,6 +1,13 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views  # Importar las vistas de autenticación
+from .views import login_view
+from .views import login_alt_view
+
+urlpatterns = [
+    
+]
+
 
 urlpatterns = [
     path('login/', views.CustomLoginView.as_view(template_name='core/login.html'), name='login'), # Ruta de inicio de sesión
@@ -12,8 +19,10 @@ urlpatterns = [
     path('cancelar/<int:reserva_id>/', views.cancelar_reserva, name='cancelar_reserva'),
     path('completar/<int:reserva_id>/', views.completar_reserva, name='completar_reserva'),
     path('reservar/', views.reservar_paquete, name='reservar'),  # esta es la que usa el formulario
-    path('log_usu/', views.log_usu, name='log_usu'),
-    
+    path('login-alt/', login_alt_view, name='login_alt'),  
+    path('form_rembolso/', views.form_rembolso, name='form_rembolso'),
+
+
     # Rutas de administración
     path('alertas/', views.ver_alertas, name='ver_alertas'),
     path('reembolsos/', views.ver_reembolsos, name='ver_reembolsos'),
