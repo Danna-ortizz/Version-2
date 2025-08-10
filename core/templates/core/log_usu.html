@@ -1,16 +1,52 @@
 {% extends 'core/base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
 
-<br>
+<style>
+    body {
+        background: url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e") no-repeat center center fixed;
+        background-size: cover;
+        margin: 0;
+        padding: 0;
+    }
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 56px); /* ajusta este valor según la altura del navbar */
+    }
+    .login-card {
+        background: rgba(255, 255, 255, 0.85);
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+        backdrop-filter: blur(6px);
+    }
+    .login-card h3 {
+        margin-bottom: 1.5rem;
+        color: #333;
+    }
+</style>
 
-<form method="POST" action="">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label for="email">Correo electrónico</label>
-        <input type="email" class="form-control" name="email" required>
+<div class="login-container">
+    <div class="login-card">
+        <h3>Iniciar Sesión</h3>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div class="mb-3 text-start">
+                <label for="email" class="form-label">Correo electrónico</label>
+                <input type="email" class="form-control" name="email" placeholder="Ingresa tu correo" required>
+            </div>
+            <div class="mb-3 text-start">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" name="password" placeholder="********" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Entrar</button>
+        </form>
     </div>
-    <div class="mb-3">
-        <label for="password">Contraseña</label>
-        <input type="password" class="form-control" name="password" required>
-    </div>
-    <button type="submit" class="btn btn-primary w-100">Entrar</button>
-</form>
+</div>
+
+{% endblock %}
