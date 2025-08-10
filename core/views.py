@@ -236,6 +236,7 @@ from django.shortcuts import render
 from django.db import connection
 
 def estadisticos(request):
+    # --- Consulta 1: Top 5 Paquetes Más Reservados ---
     with connection.cursor() as cursor:
         cursor.execute("""
             SELECT TOP (5)
@@ -264,7 +265,53 @@ def estadisticos(request):
         for row in rows
     ]
 
-    return render(request, 'core/estadisticos.html', {'paquetes': paquetes})
+    # --- Consulta 2: Pivot de Reservas por Mes y Paquete ---
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT 
+                FORMAT(CAST(r.fecha_reserva AS datetime), 'MMMM', 'es-MX') AS mes,
+                p.nombre_paquete,
+                COUNT(*) AS total
+            FROM core_reserva r
+            JOIN paquetes_turisticos p ON r.paquete_id = p.id
+            GROUP BY FORMAT(CAST(r.fecha_reserva AS datetime), 'MMMM', 'es-MX'), p.nombre_paquete
+            ORDER BY mes;
+        """)
+        pivot_rows = cursor.fetchall()
+
+    # --- Procesar datos para tabla dinámica ---
+    meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+             'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
+
+    paquetes_pivot = sorted(list(set(row[1] for row in pivot_rows)))
+    pivot_dict = defaultdict(dict)
+
+    for mes in meses:
+        pivot_dict[mes] = {paquete: 0 for paquete in paquetes_pivot}
+
+    for mes, paquete, total in pivot_rows:
+        mes = mes.lower()
+        pivot_dict[mes][paquete] = total
+
+    pivot_data = []
+    for mes in meses:
+        fila = {'mes': mes.title()}
+        fila.update(pivot_dict[mes])
+        pivot_data.append(fila)
+
+    pivot_columns = ['mes'] + paquetes_pivot
+# 🎨 Paleta de colores para el gráfico (tantos como paquetes_pivot)
+    colores_chart = [
+        f'hsl({(i * 40) % 360}, 70%, 50%)' for i in range(len(paquetes_pivot))
+    ]
+
+    # --- Renderizar template con ambos conjuntos ---
+    return render(request, 'core/estadisticos.html', {
+    'paquetes': paquetes,
+    'pivot_data': pivot_data,
+    'pivot_columns': pivot_columns,
+    'colores_chart': colores_chart
+})
 
 
 def pagar_reserva(request, reserva_id):
