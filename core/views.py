@@ -136,7 +136,19 @@ def reservar_paquete(request):
     paquetes = PaqueteTuristico.objects.all()
     return render(request, 'core/index.html', {'paquetes': paquetes})
 
+def log_usu(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
 
+        user = authenticate(request, username=email, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('inicio')
+        else:
+            messages.error(request, 'Correo o contraseña incorrectos.')
+
+    return render(request, 'core/log_usu.html')
 
 
 def historial_reservas(request, cliente_id):

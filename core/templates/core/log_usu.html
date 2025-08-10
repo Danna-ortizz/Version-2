@@ -1,0 +1,16 @@
+{% extends 'core/base.html' %}
+
+<br>
+
+<form method="POST" action="">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="email">Correo electrónico</label>
+        <input type="email" class="form-control" name="email" required>
+    </div>
+    <div class="mb-3">
+        <label for="password">Contraseña</label>
+        <input type="password" class="form-control" name="password" required>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Entrar</button>
+</form>
