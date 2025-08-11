@@ -303,6 +303,7 @@ def estadisticos(request):
     # --- Consulta 1: Top 5 Paquetes Más Reservados ---
     with connection.cursor() as cursor:
         cursor.execute("""
+                       
             SELECT TOP (5)
                 p.id AS paquete_id,
                 p.nombre_paquete,
