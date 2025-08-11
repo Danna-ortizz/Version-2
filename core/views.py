@@ -115,7 +115,7 @@ def reservar_paquete(request):
                         cliente_id, paquete_id, total_reserva
                     )
                     VALUES (%s, %s, %s, %s, %s,
-                        (SELECT precio FROM paquetes_turisticos WHERE id = %s))
+                        (SELECT precio FROM paquetes_turisticos WHERE id_pk = %s))
                 """
 
                 params = [
