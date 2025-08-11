@@ -1,11 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.contrib import messages
-from django.db import connection
-from .models import PaqueteTuristico, Cliente, Reserva
-from .forms import ReservaForm
-from collections import defaultdict
+from django.db import connection, transaction
+from django.views.decorators.http import require_http_methods
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login
+from django.contrib.auth import views as auth_views
+from collections import defaultdict
+import logging
+
+from .models import PaqueteTuristico, Cliente, Reserva, Alerta, Reembolso
+from .forms import ReservaForm
+
 
 
 def inicio(request):
@@ -23,7 +30,7 @@ def inicio(request):
         'reservas_por_cliente': reservas_por_cliente.items()
     })
 
-from .models import PaqueteTuristico, Cliente, Reserva, Alerta  # importar Alerta
+
 
 def reservar_paquete(request):
     if request.method == 'POST':
@@ -192,14 +199,71 @@ def login_view(request):
             'error': 'Ocurrió un error inesperado. Intenta nuevamente.'
         })
 
+from django.views.decorators.http import require_http_methods
+from django.db import connection, transaction
+from django.contrib import messages
+from django.shortcuts import render, redirect
+
+
 def form_rembolso(request):
-    return render(request, 'core/form_rembolso.html')
+    if request.method == "POST":
+        # Acepta ambos nombres por si el HTML cambia
+        idReserva = (
+            (request.POST.get("reserva_id") or request.POST.get("order_id") or "").strip()
+        )
+
+        # Validaciones básicas
+        if not idReserva:
+            messages.error(request, "El ID de la reserva es obligatorio.")
+            return redirect("form_rembolso")
+        if not idReserva.isdigit():
+            messages.error(request, "El ID de la reserva debe ser numérico.")
+            return redirect("form_rembolso")
+
+        try:
+            with transaction.atomic():
+                with connection.cursor() as cursor:
+                    # 1) Obtener total_reserva
+                    cursor.execute("""
+                        SELECT total_reserva
+                        FROM core_reserva
+                        WHERE id = %s
+                    """, [idReserva])
+                    fila = cursor.fetchone()
+                    if not fila:
+                        messages.error(request, "No existe una reserva con ese ID.")
+                        return redirect("form_rembolso")
+                    totalReserva = fila[0]
+
+                    # 2) Evitar reembolso duplicado
+                    cursor.execute("SELECT COUNT(*) FROM core_reembolso WHERE reserva_id = %s", [idReserva])
+                    if cursor.fetchone()[0] > 0:
+                        messages.warning(request, "Ya existe un reembolso para esta reserva.")
+                        return redirect("form_rembolso")
+
+                    # 3) Insertar reembolso (fecha = GETDATE())
+                    cursor.execute("""
+                        INSERT INTO core_reembolso (monto, fecha, reserva_id)
+                        OUTPUT INSERTED.id
+                        VALUES (%s, GETDATE(), %s)
+                    """, [totalReserva, idReserva])
+                    idNuevoReembolso = cursor.fetchone()[0]
+
+            messages.success(
+                request,
+                f"Reembolso registrado (ID {idNuevoReembolso}) por ${float(totalReserva):.2f}."
+            )
+        except Exception as e:
+            messages.error(request, f"Error al registrar el reembolso: {e}")
+        return redirect("form_rembolso")
+
+    # GET
+    return render(request, "core/form_rembolso.html")
+
 
 def estadisticos(request):
+    # Aquí podrías agregar lógica para obtener estadísticas de reservas, destinos, etc.
     return render(request, 'core/estadisticos.html')
-
-
-
 
 def historial_reservas(request, cliente_id):
     cliente = get_object_or_404(Cliente, id=cliente_id)

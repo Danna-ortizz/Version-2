@@ -1,34 +1,25 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<div class="container mt-5" style="max-width: 500px;">
-    <h2 class="mb-4 text-center">Solicitud de Reembolso</h2>
+<div class="container mt-5" style="max-width: 520px;">
+  <h2 class="mb-4 text-center">Registro de Reembolso</h2>
 
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
 
-    <form method="POST" action="">
-        {% csrf_token %}
+  <form method="POST" action="{% url 'form_rembolso' %}">
+    {% csrf_token %}
 
-        <div class="mb-3">
-            <label for="email" class="form-label">Correo electrónico</label>
-            <input type="email" class="form-control" id="email" name="email" required>
-        </div>
+    <div class="mb-3">
+      <label for="reserva_id" class="form-label">ID de la reserva</label>
+      <input type="text" class="form-control" id="reserva_id" name="reserva_id" placeholder="Ej. 123" required>
+      <div class="form-text">Debe existir en la tabla de reservas.</div>
+    </div>
 
-        <div class="mb-3">
-            <label for="order_id" class="form-label">ID del pedido</label>
-            <input type="text" class="form-control" id="order_id" name="order_id" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="reason" class="form-label">Motivo del reembolso</label>
-            <textarea class="form-control" id="reason" name="reason" rows="4" required></textarea>
-        </div>
-
-        <button type="submit" class="btn btn-danger w-100">Solicitar Reembolso</button>
-    </form>
+    <button type="submit" class="btn btn-danger w-100">Registrar Reembolso</button>
+  </form>
 </div>
 {% endblock %}
